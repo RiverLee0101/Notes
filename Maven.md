@@ -184,12 +184,12 @@ public class hello{
 
 ### 5.2.4 最终的项目结构
 
-![1557230704551](https://github.com/RiverLee0101/Notes/blob/master/images/maven-01.png)
+![maven-01.png](https://github.com/RiverLee0101/Notes/blob/master/images/maven-01.png?raw=true)
 
 ## 5.3 添加项目依赖
 
 - 右键点击主工程 -> 选择open module settings（或者F4快捷键）
-- ![1557230942037](https://github.com/RiverLee0101/Notes/blob/master/images/maven-02.png)
+- ![maven-02.png](https://github.com/RiverLee0101/Notes/blob/master/images/maven-02.png?raw=true)
 
 - 上面的操作是添加web-app对web-service模块的依赖
 

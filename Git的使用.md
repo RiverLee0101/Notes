@@ -70,3 +70,16 @@
 - 第四步：
   - 上传本地文件到GitHub远程仓库：如果远程仓库为空白且第一次上传 `git push -u origin master`，以后就不用 -u
   - 如果远程仓库不是空的，则必须把远程仓库同步到本地：`git pull --rebase origin master`，然后再使用推送命令：`git push origin master` 上传
+
+
+
+## 4. 新建develop分支并合并到master
+
+- 创建develop分支并切换到develop分支：`git checkout -b develop` 这一条命令相当于 `git branch develop，git checkout develop`
+- 查看当前分支：`git branch`，星号的就是当前分支
+- 现在我们对此文件进行修改，第4条就是现在加的
+- 然后提交:
+  - `git add Git的使用.md`
+  - `git commit -m"在分支develop上编辑的"`
+- 切回master分支：`git checkout master`
+- 切回master分支以后，查看 Git的使用.md 文件，刚才添加的内容应该不见了，因为那是提交到develop分支上，而master分支的提交点并没有改变

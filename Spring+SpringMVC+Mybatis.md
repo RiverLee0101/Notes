@@ -100,7 +100,7 @@
 
 - 工程目录：
 
-  ![1557369759930](C:\Users\11101453\AppData\Roaming\Typora\typora-user-images\1557369759930.png)
+  ![ssm-01.png](https://github.com/RiverLee0101/Notes/blob/master/images/ssm-01.png?raw=true)
 
 - ***web/WEB-INF/web.xml：***
 
@@ -232,7 +232,7 @@
 
 - **mybatis项目基本结构：**
 
-  ![1557456879099](C:\Users\11101453\AppData\Roaming\Typora\typora-user-images\1557456879099.png)
+  ![ssm-01.png](https://github.com/RiverLee0101/Notes/blob/master/images/ssm-02.png?raw=true)
 
 - ***实体类 Category.java:***
 
@@ -379,7 +379,7 @@
 
 ## 4.2 项目结构
 
-![1557567069422](C:\Users\11101453\AppData\Roaming\Typora\typora-user-images\1557567069422.png)
+![ssm-01.png](https://github.com/RiverLee0101/Notes/blob/master/images/ssm-03.png?raw=true)
 
 
 
@@ -397,7 +397,7 @@
 
 - **项目结构**
 
-​	![1557747265601](C:\Users\11101453\AppData\Roaming\Typora\typora-user-images\1557747265601.png) ![1557747641100](C:\Users\11101453\AppData\Roaming\Typora\typora-user-images\1557747641100.png)
+​	 ![ssm-01.png](https://github.com/RiverLee0101/Notes/blob/master/images/ssm-04.png?raw=true)
 
 - **持久层：DAO层（mapper）** —— `com.how2java.mapper`
 

@@ -1,4 +1,4 @@
-# Git的使用
+# 一、Git的使用
 
 ## 1. 安装git和生成ssh秘钥
 
@@ -99,7 +99,7 @@
 
 
 
-# Git命令大全
+# 二、Git命令大全
 
 ## 1. 本地仓库与远程仓库同步
 
@@ -111,6 +111,7 @@
 - 同步本地和远程：`git push -u origin master`（远程为空且第一次上传）
 - 同步本地和远程：`git push origin master`（非第一次上传）
 - 同步远程和本地：`git pull --rebase origin master`
+- 同步远程和本地：`git pull origin master`(将远程origin的master分支拉取过来和本地的当前分支合并)
 
 
 

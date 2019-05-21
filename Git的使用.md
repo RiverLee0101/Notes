@@ -82,4 +82,6 @@
   - `git add Git的使用.md`
   - `git commit -m"在分支develop上编辑的"`
 - 切回master分支：`git checkout master`
-- 切回master分支以后，查看 Git的使用.md 文件，刚才添加的内容应该不见了，因为那是提交到develop分支上，而master分支的提交点并没有改变
+  - 切回master分支以后，查看 Git的使用.md 文件（cat Git的使用.md），刚才添加的内容不见了，因为那是提交到develop分支上，而master分支的提交点并没有改变
+- 把develop分支上的工作成果合并到master上：`git merge develop`（用于将指定分支合并到当前分支）
+- 合并完成就可以删除develop分支了：`git branch -d develop`

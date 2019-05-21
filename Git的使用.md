@@ -60,7 +60,7 @@
 - 在该文件夹下使用命令：`git init` 初始化一个本地仓库（初始化成功以后本文件夹后面会出现一个蓝色的（master）标识这个文件夹文一个本地仓库）
 - 在Notes文件夹下创建一个 Test.txt 文件
 - 第一步：
-  - 添加Test.txt文件到库跟踪区：`git add Test.txt`（git add . 表示将整个文件夹添加到本地仓库）
+  - 添加Test.txt文件到库跟踪区：`git add Test.txt`（git add . 表示将整个文件夹添加到库跟踪区）
   - 查看Test.txt是否被添加到库跟踪区：`git status`
 - 第二步：
   - 将库跟踪区改变的代码提交到本地代码库中：`git commit -m"first commit"`，引号内是注释
@@ -82,6 +82,45 @@
   - `git add Git的使用.md`
   - `git commit -m"在分支develop上编辑的"`
 - 切回master分支：`git checkout master`
-  - 切回master分支以后，查看 Git的使用.md 文件（cat Git的使用.md），刚才添加的内容不见了，因为那是提交到develop分支上，而master分支的提交点并没有改变
+- 切回master分支以后，查看 Git的使用.md 文件，刚才添加的内容应该不见了，因为那是提交到develop分支上，而master分支的提交点并没有改变
 - 把develop分支上的工作成果合并到master上：`git merge develop`（用于将指定分支合并到当前分支）
 - 合并完成就可以删除develop分支了：`git branch -d develop`
+
+
+
+## 5. 推送本地分支到远程分支并建立关联
+
+- 远程已有remote_branch 分支并且已经关联到本地local_branch，且已经切换到local_branch分支：
+  - `git push`
+- 远程已有remote_branch 分支但未关联本地local_branch分支，且已经切换到local_branch分支：
+  - `git push -u origin/remote_branch`
+- 远程没有remote_branch 分支，本地已经切换到local_branch分支：
+  - `git push origin local_branch:remote_branch`
+
+
+
+# Git命令大全
+
+## 1. 本地仓库与远程仓库同步
+
+- 初始化Git仓库：`git init`
+- 添加到库跟踪区：`git add .`
+- 提交到代码库中：`git commit -m"some instructions"`
+- 查看分支的状态：`git status`
+- 关联本地和远程：`git remote add origin  git@github.com:RiverLee0101/Notes.git`
+- 同步本地和远程：`git push -u origin master`（远程为空且第一次上传）
+- 同步本地和远程：`git push origin master`（非第一次上传）
+- 同步远程和本地：`git pull --rebase origin master`
+
+
+
+## 2. 分支的相关使用
+
+- 创建新分支：`git branch new_branch`
+- 切换到分支：`git checkout new_branch`
+- 创建并切换：`git checkout -b new_branch`
+- 查看本地分支：`git branch`
+- 查看远程分支：`git branch -r`
+- 查看所有分支：`git branch -a`
+- 删除某个分支：`git branch -d new_branch`
+- 合并某个分支：`git merge new_branch`（在master分支下）

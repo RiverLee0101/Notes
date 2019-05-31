@@ -227,8 +227,8 @@
           });
       });
   </script>
-  <button id="d1">获取文本内容</button>
-  <div d="d1">
+  <button id="b1">获取文本内容</button>
+  <div id="d1">
       这是div的内容
       <span>这是div里的span</span>
   </div>

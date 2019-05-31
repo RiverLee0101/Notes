@@ -340,6 +340,119 @@
 
 
 
+## 3.4 Mybatis的Mapper接口以及Example
+
+### 3.4.1  什么是example类
+
+- mybatis-generator 会为每个字段产生Criterion，为低层的mapper.xml 创建动态SQL。如果表的字段比较多，产生的example类会十分庞大。
+
+- 理论上通过example类可以构造你想到的任何筛选条件。在mybatis-generator中加以配置，配置数据表的生成操作就可以自动生成example了。
+
+- 具体配置方法：<https://www.cnblogs.com/zorro-y/p/5602471.html>
+
+- example类对应实体类，在 **dal.entity** 包下面，例：实体类AssociationKey.java 对应的example类AssociationKeyCriteria.java
+
+- 了解 **example类** 成员变量：
+
+  ```java
+  protected String orderByClause; //排序字段
+  protected boolean distinct; //过滤重复数据
+  protected List<Criteria> oredCriteria; //自定义查询条件
+  
+  //创建一个查询条件
+  public Criteria createCriteria(){...}
+  
+  //内部类Criteria包含一个Cretiron的集合，每一个Criteria对象包含的Cretiron之间是由 AND 连接的
+  public static class Criteria extends GeneratedCriteria{
+      protected Criteria(){super();}
+  }
+  
+  //mybatis中逆向工程中的代码模型
+  protected abstract static class GeneratedCriteria{...}
+  
+  //最基本，最低层的where条件，用于字段级的筛选
+  piblic static class Criterion{...}
+  ```
+
+- example类中的抽象类 **GeneratedCriteria{...}** 中包含的方法：
+
+  |          方法名           |           功能说明           |
+  | :-----------------------: | :--------------------------: |
+  |     `andXxxIsNull()`      |   添加字段xxx为null的条件    |
+  |    `andXxxIsNotNull()`    |  添加字段xxx不为null的条件   |
+  |  `andXxxEqualTo(value)`   |  添加xxx字段等于value的条件  |
+  | `andXxxNotEqualTo(value)` | 添加xxx字段不等于value的条件 |
+  |            ...            |             ...              |
+
+
+
+### 3.4.2 example类的使用
+
+- 比如下面的example是根据user表生成的，UserMapper属于DAO层，UserMapper.xml是对应的映射文件。
+
+  ```java
+  // UserMapper提供的接口：
+  long countByExample(CompetingStoreExample example);
+  List<CompetingStore> selectByExample(CompetingStoreExample example);
+  
+  
+  // 创建查询条件实例
+  CompetingStoreExample example = new CompetingStoreExample();
+  CompetingStoreExample.Criteria criteria= example.createCriteria();
+  
+  // 1.查询用户数量
+  // 类似于：select count(*) from user
+  long count = UserMapper.countByExample(example);
+  
+  // 2.where条件查询或多条件查询
+  // 类似于：select * from user where name={#user.name} and sex={#user.sex} order by age asc
+  example.setOrderByClause("age asc"); // 升序
+  example.setDistinct(false); // 不去重
+  if(StringUtils.isNotBlank(user.getName())){
+      criteria.andNameEqualTo(user.getName()); // 添加查询条件 Name
+  }
+  if(StringUtil.isNotBlank(user.getSex())){
+      criteria.andSexEqualTo(user.getSex()); // 添加查询条件Sex
+  }
+  list<User> userlist = userMapper.selectByExample(example);
+  
+  // 3.模糊查询
+  // 类似于：select * from user where name like %{#user.name}%
+  if(StringUtil.isNotBlank(user.getName())){
+      criteria.andNameLike('%'+name+'%');
+  }
+  List<User> userList = userMapper.selectByExample(example);
+  
+  // 4.分页查询
+  // 类似于：select * from user limit start to rows
+  int start = (currentPage - 1) * rows;
+  example.setPageSize(rows); // 分页查询中的一页数量
+  example.setStartRow(start); // 开始查询的位置
+  List<User> userList = userMapper.selectByExample(example);
+  ```
+
+  
+
+### 3.4.3 mapper接口中的方法解析
+
+- **dal.mapper** 包中的 **interface DAO** 拥有以下方法：
+
+  |                         方法名                          |          功能说明          |
+  | :-----------------------------------------------------: | :------------------------: |
+  |        `int countByExample(UserExample example)`        |         按条件计数         |
+  |          `int deleteByPrimaryKey(Integer id)`           |         按主键删除         |
+  |       `int deleteByExample(UserExample example)`        |         按条件删除         |
+  |          `String/Integer insert(User record)`           |          插入数据          |
+  |          `User selectByPrimaryKey(Integer id)`          |         按主键查询         |
+  |       `List selectByExample(UserExample example)`       |         按条件查询         |
+  |          `int updateByPrimaryKey(User record)`          |         按主键更新         |
+  |     `int updateByPrimaryKeySelective(User record)`      | 按主键更新值不为null的字段 |
+  | `int updateByExample(User record, UserExample example)` |         按条件更新         |
+
+- 参数有 **UserExample** 的为 **按条件查询** 的情况，此情况要构造查询条件 **example**
+
+
+
 # 4. Spring+Mybatis
 
 ## 4.1 Spring+Mybatis整合思路

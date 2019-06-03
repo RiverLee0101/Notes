@@ -5,3 +5,4 @@
 * 测试Mac用户名。
 * 测试更改的Mac用户名lijiang-mac。
 * 再次测试global名lijiang-mac。
+* 测试lijiang-11101453用户名。

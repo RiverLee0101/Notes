@@ -6,3 +6,11 @@
 * 测试更改的Mac用户名lijiang-mac。
 * 再次测试global名lijiang-mac。
 * 测试lijiang-11101453用户名。
+
+
+
+# 网址：
+
+- <https://blog.csdn.net/nba_linshuhao/article/details/82799685>
+- <https://www.cnblogs.com/jingpeipei/p/6291071.html>
+- <https://www.cnblogs.com/DoubleEggs/p/6243216.html>

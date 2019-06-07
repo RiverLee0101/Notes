@@ -184,7 +184,9 @@
 
 # 3. MyBatis框架
 
-## 3.1 安装MySQL和WorkBench
+## 3.1 MySQL和WorkBench相关
+
+### 3.1.1 Win安装MySQL和WorkBench
 
 - 下载MySQL：<https://dev.mysql.com/downloads/mysql/>，解压至文件夹：D:\Program Files\mysql-8.0.16-winx64
 
@@ -215,6 +217,24 @@
   ```
 
 - 常用cmd操作数据库命令：<https://blog.csdn.net/m0_37774790/article/details/81007192>
+
+
+
+### 3.1.2 Mac修改MySQL密码：
+
+1. 苹果->系统偏好设置->最下边点mysql 在弹出页面中 关闭mysql服务（点击stop mysql server）
+2. 进入终端输入：cd /usr/local/mysql/bin/
+   1. 回车后 登录管理员权限 sudo su
+   2. 回车后输入以下命令来禁止mysql验证功能 ./mysqld_safe --skip-grant-tables &
+   3. 回车后mysql会自动重启（偏好设置中mysql的状态会变成running）
+3. 输入命令 ./mysql
+   1. 回车后，输入命令 FLUSH PRIVILEGES;
+   2. 回车后，输入命令 SET PASSWORD FOR ['root'@'localhost'](mailto:'root'@'localhost') = PASSWORD('你的新密码');
+   3. 密码修改完成，可以成功登陆。
+4. 首先手动启动MySQL应用程序
+   1. 打开终端输入如下命令：  /usr/local/MySQL/bin/mysql -u root -p
+   2. root为用户名，会出现如下命令：Enter password:  123456
+5. 这样就可以访问数据库服务器了
 
 
 

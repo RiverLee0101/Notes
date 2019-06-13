@@ -309,3 +309,217 @@
 8. 客户端解密信息
 
    客户端用之前生成的秘钥解密服务端传过来的信息，于是获取了解密后的内容。
+
+
+
+# 二、HttpClient使用详解
+
+## 1. HttpClient简介
+
+- HttpClient是Apache Jakarta Common 下的子项目，用来提供高效的、最新的功能丰富的支持HTTP协议的客户端编程工具包，并且支持HTTP协议最新的版本和建议。
+- HttpClient 的主要功能：
+  - 基于标准的、纯净的Java语言，实现了HTTP1.0和HTTP1.1
+  - 以可以扩展的面向对象的结构实现了HTTP全部的方法（GET/POST/PUT/HEAD/DELETE/OPTIONS等）
+  - 支持加密的HTTPS协议、
+  - 通过HTTP代理方式建立透明的连接
+  - 支持代理服务器（Nginx等）
+  - 利用CONNECT方法通过HTTP代理建立隧道的HTTPS连接
+  - Basic, Digest...等认证方案
+  - 插件式的自定义认证方案
+  - 可插拔的安全套接字工厂，使得接入第三方解决方案变得容易
+  - 连接管理支持多线程的应用。支持设置最大连接数，同时支持设置每个主机的最大连接数，发现关闭过期的连接。
+  - 自动化处理Set-Cookie：来自服务器的头，并在适当的时候将它们发送回cookie
+  - 可以自定义Cookie策略的插件化机制
+  - Request的输出流可以避免流中内容体直接从socket缓冲到服务器
+  - Reponse的输入流可以有效的从socket服务器直接读取相应内容
+  - 在HTTP1.0和HTTP1.1中使用keep-alive来保持持久连接
+  - 可以直接获取服务器发送的响应码和响应头部
+  - 具备设置连接超时的能力
+  - 支持HTTP/1.1响应缓存
+  - 源代码基于Apache License可免费获取
+  - 支持自动（跳转）转向
+  - ...
+
+
+
+## 2.一般使用步骤
+
+- 使用**HttpClient发送请求**、**接收响应**，一般需要以下步骤：
+
+- **HttpGet请求响应的一般步骤**：
+
+  1. 创建HttpClient对象，可以使用 `HttpClients.createDefault()`;
+
+  2. 无参数GET请求：直接使用构造方法 `HttpGet(String url)` 创建 HttpGet 对象
+
+     带参数GET请求：先使用 `URIBuilder(String url)` 创建对象，再调用 `addParameter(String param, String value)`, 或 `setParameter(String param, String value)`来设置请求参数，并调用 `build()` 方法构建一个URI对象。只有构造方法`HttpGet(URI uri)`来创建HttpGet对象；
+
+  3. 创建HttpResponse，调用 `HttpClient` 对象的`execute(HttpUriRequest request)` 发送请求，该方法返回一个`HttpResponse`。调用`HttpResponse`的`getAllHeaders()、getHeaders(String name)`等方法可获取服务器的响应头；调用`HttpResponse`的`getEntity()`方法可获取HttpEntity对象，该对象包装了服务器的响应内容。程序可通过该对象获取服务器的响应内容。通过调用`getStatusLine().getStatusCode()`可以获取响应状态码；
+
+  4. 释放连接。
+
+- **HttpPost请求响应的一般步骤**：
+
+  1. 创建`HttpClient`对象,可以使用`HttpClients.createDefault()`；
+
+  2. **无参数POST请求**：直接使用构造方法`HttpPost(String url)`创建`HttpPost`对象即可；
+
+     **带参数POST请求**：先构建HttpEntity对象并设置请求参数，然后调用setEntity(HttpEntity entity)创建HttpPost对象；
+
+  3. 创建`HttpResponse`，调用`HttpClient`对象的`execute(HttpUriRequest request)`发送请求，该方法返回一个`HttpResponse`。调用`HttpResponse`的`getAllHeaders()、getHeaders(String name)`等方法可获取服务器的响应头；调用`HttpResponse`的`getEntity()`方法可获取HttpEntity对象，该对象包装了服务器的响应内容。程序可通过该对象获取服务器的响应内容。通过调用`getStatusLine().getStatusCode()`可以获取响应状态码；
+
+  4. 释放连接。
+
+
+
+## 3. 代码示例
+
+- 构建一个Maven项目，引入以下依赖：
+
+  ```xml
+  <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.3.5</version>
+  </dependency>
+  <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.7.7</version>
+  </dependency>
+  <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>1.3.2</version>
+  </dependency>
+  ```
+
+### 3.1 普通无参GET请求
+
+```java
+// 普通的无参数get请求：打开一个url,抓取url响应结果
+    @Test
+    public void doGet() throws Exception{
+        // 创建HttpClient对象
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        // 创建Get请求
+        HttpGet httpGet = new HttpGet("http://www.baidu.com");
+        CloseableHttpResponse response = null;
+        try{
+            // 执行get请求
+            response = httpClient.execute(httpGet);
+            // 判断返回状态是否为200
+            if(response.getStatusLine().getStatusCode()==200){
+                // 请求体内容
+                String content = EntityUtils.toString(response.getEntity(),"UTF-8");
+                // 打出请求体内容
+                System.out.println(content);
+                // 内容长度
+                System.out.println("内容长度："+content.length());
+            }
+        }finally {
+            if(response!=null){
+                response.close();
+            }
+            httpClient.close();
+        }
+    }
+```
+
+### 3.2 执行带参GET请求
+
+```java
+// 执行带参数的get请求：模拟使用百度搜索关键字“java”，并获取响应结果
+    @Test
+    public void doGetParam() throws Exception{
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        // 定义请求的参数
+        URI uri = new URIBuilder("http://www.baidu.com/s").setParameter("wd","java").build();
+        HttpGet httpGet = new HttpGet(uri);
+        CloseableHttpResponse response = null;
+        try{
+            response = httpClient.execute(httpGet);
+            if(response.getStatusLine().getStatusCode()==200){
+                String content = EntityUtils.toString(response.getEntity(),"UTF-8");
+                System.out.println(content);
+                System.out.println("内容长度："+content.length());
+            }
+        }finally {
+            if(response!=null){
+                response.close();
+            }
+            httpClient.close();
+        }
+
+    }
+```
+
+### 3.3 普通无参POST请求
+
+```java
+//普通的无参数POST请求：设置header来伪装浏览器请求
+    @Test
+    public void doPost() throws Exception{
+        // 创建HttpClient对象
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        // 创建Http Post请求
+        HttpPost httpPost = new HttpPost("http://www.baidu.com");
+        // 伪装浏览器请求
+        //httpPost.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
+        CloseableHttpResponse response = null;
+        try{
+            // 执行http post请求
+            response = httpClient.execute(httpPost);
+            if(response.getStatusLine().getStatusCode()==200){
+                String content = EntityUtils.toString(response.getEntity(),"UTF-8");
+                System.out.println(content);
+                System.out.println("内容长度："+content.length());
+            }else{
+                System.out.println("请求失败");
+            }
+        }finally {
+            if(response!=null){
+                response.close();
+            }
+            httpClient.close();
+        }
+    }
+```
+
+### 3.4 执行带参POST请求
+
+```java
+// 执行带参数的POST请求：模拟开源中国检索java，并伪装浏览器请求
+    @Test
+    public void doPostParam() throws Exception{
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost("http://www.oschina.net/search");
+        // 设置两个post参数，一个是scope,一个是q
+        List<NameValuePair> parameters = new ArrayList<NameValuePair>(0);
+        parameters.add(new BasicNameValuePair("scope","project"));
+        parameters.add(new BasicNameValuePair("q","java"));
+        // 构造一个form表单式的实体
+        UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(parameters);
+        // 将请求实体设置到HttpPost对象中
+        httpPost.setEntity(formEntity);
+        // 伪装浏览器
+        httpPost.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36");
+        CloseableHttpResponse response = null;
+        try{
+            response = httpClient.execute(httpPost);
+            if(response.getStatusLine().getStatusCode()==200){
+                String content = EntityUtils.toString(response.getEntity(),"UTF-8");
+                System.out.println(content);
+                System.out.println("内容长度："+content.length());
+            }
+        }finally {
+            if(response!=null){
+                response.close();
+            }
+            httpClient.close();
+        }
+    }
+```
+
+
+

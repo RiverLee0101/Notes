@@ -87,7 +87,7 @@
 
   - 浏览器打开：http://localhost:9200/_plugin/head/
 
-    ![1560413442895](C:\Users\11101453\AppData\Roaming\Typora\typora-user-images\1560413442895.png)
+    ![es-1.png](https://github.com/RiverLee0101/Notes/blob/master/images/es-1.png?raw=true)
 
 
 

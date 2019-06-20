@@ -205,7 +205,7 @@
   <script>
       $(function(){
           %("#b1").click(function(){
-              alert($("input1").val());
+              alert($("#input1").val());
           });
       });
   </script>

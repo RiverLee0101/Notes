@@ -3,15 +3,20 @@
 ## 1.1 Elasticsearch是什么？
 
 - **Elasticsearch** 是一个基于**Apache Lucene** 的开源分布式全文检索和分析引擎。可以近实时的**储存**，**搜索**和**分析**海量数据，为需要复杂搜索功能的应用程序提供底层的引擎和技术。
+- 然而Elasticsearch 不仅仅是Lucene，并且也不仅仅是一个全文搜索引擎，它可以被下面这样准确地形容：
+  - 一个分布式的实时文档储存，每个字段可以被索引和搜素；
+  - 一个分布式实时分析搜索引擎；
+  - 能胜任上百个服务节点的扩展，并支持PB级别的结构化或非结构化数据。
+- Elasticsearch 将所有的的功能打包成一个单独的服务，这样你可以通过程序与它提供的简单的RESTful API进行通信，可以使用自己喜欢的语言充当客户端，甚至可以使用命令行（去充当这个客户端）。
 
 ## 1.2 基本概念
 
 - Node：每一个es实例为一个节点，节点类型包括主节点，数据节点，协调节点。从集群内部来说，集群是有主节点，主节点通过选举产生，从集群外部来说es是去中心化，没中心节点，外部与集群所有节点通信都是等价的。
-- Cluster
+- Cluster：集群是由一个或者多个拥有相同 cluster.name 配置的节点组成，它们共同承担数据和负载的压力。当有节点加入集群或者从集群中移除时，集群将会重新平均分配所有数据。
 - Document
 - Field
 - Type
-- Index
+- Index：我们往Elasticsearch中添加数据时需要用到索引--保存相关数据的地方。索引实际上是指向一个或者多个物理分片的**逻辑命名空间**。
 - Shard
 - Replica
 - Mapping
@@ -792,5 +797,82 @@ public class ElasticsearchIndexAPITest {
 
 ## 5.1 Using scrolls in Java
 
-- 一般的搜索请求都是返回一页的数据，无论多大的数据量都会返回给用户，Scrolls API可以允许我们检索大量的数据（甚至是全部数据）。Scroll API允许我们做一个初始阶段搜索页并且持续批量从ElasticSearch里面拉取结果直到结果没有剩下。Scroll API的创建并不是为了实时的用户响应，而是为了处理大量的数据。
+- 一般的搜索请求都是返回一页的数据，无论多大的数据量都会返回给用户，Scrolls API可以允许我们**检索大量的数据**（甚至是全部数据）。Scroll API允许我们做一个初始阶段搜索页并且**持续批量从ElasticSearch里面拉取结果**直到结果没有剩下。Scroll API的创建并不是为了实时的用户响应，而是为了**处理大量的数据**。
+- 代码：
+
+```java
+@Test
+    public void testScrollApi() throws ExecutionException, InterruptedException {
+        MatchQueryBuilder qb = matchQuery("user","lijiang");
+        SearchResponse response = client.prepareSearch(INDEX).addSort(FieldSortBuilder.DOC_FIELD_NAME, SortOrder.ASC)
+                .setScroll(new TimeValue(60000))
+                .setQuery(qb)
+                .setSize(100).get();
+        do{
+            for(SearchHit hit : response.getHits().getHits()){
+                String json = hit.getSourceAsString();
+                JSONObject object = JSONObject.fromObject(json);
+                Set<String> strings = object.keySet();
+                for(String str :strings){
+                    System.out.println(object.get(str));
+                }
+            }
+            response = client.prepareSearchScroll(response.getScrollId()).setScroll(new TimeValue(60000)).execute().get();
+        }while(response.getHits().getHits().length != 0);
+    }
+```
+
+- 如果超过滚动时间，继续使用该滚动ID搜索数据，则会报错。虽然滚动时间已过，搜索上下文会自动被清除，但是一直保持滚动代价会很大， 所以当我们不再使用滚动时要尽快使用Clear-Scroll API进行清除。
+
+## 5.2 MultiSearch API
+
+- MultiSearch API 允许在同一个API中执行多个搜索请求，它的端点是_msearch
+- 代码：
+
+```java
+@Test
+    public void testMultiSearchApi(){
+        SearchRequestBuilder srb1 = client.prepareSearch().setQuery(QueryBuilders.queryStringQuery("test")).setSize(1);
+        SearchRequestBuilder srb2 = client.prepareSearch().setQuery(QueryBuilders.matchQuery("user","lijiang")).setSize(1);
+        MultiSearchResponse multiSearchResponse = client.prepareMultiSearch().add(srb1).add(srb2).get();
+        long nbHits = 0;
+        for(MultiSearchResponse.Item item : multiSearchResponse.getResponses()){
+            SearchResponse response = item.getResponse();
+            nbHits += response.getHits().getTotalHits();
+        }
+        System.out.println(nbHits);
+    }
+```
+
+## 5.3 Using Aggregations
+
+- 聚合框架有助于根据搜索查询提供数据。它是基于简单的构建块也称为整合，**整合就是将复杂的数据摘要有序的放在一块**。聚合可以被看做是从一组获取分析信息的一系列工作的统称。聚合的实现过程就是定义这个文档集的过程。
+- 代码：
+
+```java
+@Test
+    public void testAggregations(){
+        SearchResponse searchResponse = client.prepareSearch()
+                .setQuery(QueryBuilders.matchAllQuery())
+                .addAggregation(AggregationBuilders.terms("lijiang").field("user"))
+                .addAggregation(AggregationBuilders.dateHistogram("2019-06-15").field("postData").dateHistogramInterval(DateHistogramInterval.YEAR)).get();
+        Terms lijiang = searchResponse.getAggregations().get("user");
+        Histogram postDate= searchResponse.getAggregations().get("2019-06-15");
+    }
+```
+
+## 5.4 Terminate After
+
+- 获取文档的最大数量，如果设置了，需要通过SearchResponse对象里面的isTerminatedEarly() 判断返回文档是否达到设置的数量。
+- 代码：
+
+```java
+@Test
+    public void testTerminate(){
+        SearchResponse searchResponse = client.prepareSearch(INDEX).setTerminateAfter(3).get(); // 如果达到这个数量，提前终止
+        if(searchResponse.isTerminatedEarly()){
+            System.out.println(searchResponse.getHits().totalHits);
+        }
+    }
+```
 

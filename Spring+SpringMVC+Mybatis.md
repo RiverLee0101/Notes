@@ -488,7 +488,7 @@
    ```
 
    1. SqlSessionFactoryFactory有一个唯一的必要属性：用于JDBC的 ***dataSource***
-   2. ***mapperLocations ***属性接受多个资源位置。这个属性可以用来指定MyBatis的映射器XML配置文件的位置
+   2. ***mapperLocations***属性接受多个资源位置。这个属性可以用来指定MyBatis的映射器XML配置文件的位置
 
 2. 让Spring管理mapper对象和dao
 

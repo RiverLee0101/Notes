@@ -127,6 +127,9 @@
 - 同步本地和远程：`git push origin master`（非第一次上传）
 - 同步远程和本地：`git pull --rebase origin master`
 - 同步远程和本地：`git pull origin master`(将远程origin的master分支拉取过来和本地的当前分支合并)
+- 查看关联详情：`git remote -v`
+- 解除远程仓库：`git remote rm github`（github为远程仓库在本地git中的名称）
+- 取消关联远程库：`find . -name ".git" | xargs rm -Rf`（删除本地文件夹下的.git文件夹即可）
 
 
 
@@ -162,3 +165,8 @@
   > 2、pull是为了本地 commit 和远程commit 的对比记录，git 是按照文件的行数操作进行对比的,如果同时操作了某文件的同一行那么就会产生冲突，git 也会把这个冲突给标记出来，这个时候就需要先把和你冲突的那个人拉过来问问保留谁的代码，然后在 git add && git commit && git pull 这三连，再次 pull 一次是为了防止再你们协商的时候另一个人给又提交了一版东西,如果真发生了那流程重复一遍，通常没有冲突的时候就直接给你合并了，不会把你的代码给覆盖掉；
   >
   > 3、出现代码覆盖或者丢失的情况：比如A B两人的代码pull 时候的版本都是1，A在本地提交了2，3并且推送到远程了，B 进行修改的时候没有commit 操作，他先自己写了东西，然后 git pull 这个时候 B 本地版本已经到3了，B 在本地版本3的时候改了 A 写过的代码，再进行了git commit && git push 那么在远程版本中就是4，而且 A 的代码被覆盖了，所以说所有人都要先 commit 再 pull,不然真的会覆盖代码的。
+
+## 2. 关联远程仓库提示：fatal: remote origin already exists
+
+- 先输入：`git remote rm origin`
+- 在输入：`git remote add origin git@gitlab.vmic.xyz:exbrowser-search/oversea-browsersearch-index.git`

@@ -2,6 +2,9 @@
 
 ## 1. 安装git和生成ssh秘钥
 
+- 秘钥的作用：
+  - 当我们从github和gitlab上clone项目或参与项目时，需要证明我们的身份。GitHub、gitlab支持使用SSH协议进行免密登录，而SSH采用了RSA算法保证了登录的安全性。我们要做的就是在本地生成一对RSA的秘钥，并且将其中公钥暴露给远程主机。在登录时，远程主机会向我们发送一段随机字符串，我们用自己的私钥加密以后再发回去，远程主机会用之前储存的公钥进行解密，如果匹配成功，则允许登录。
+
 - 下载安装：<https://gitforwindows.org/>
 
 - 打开Git Bash
@@ -30,6 +33,32 @@
       User git
       IdentityFile ~/.ssh/github_rsa
   ```
+  
+- **如何获取RSA秘钥：**
+
+  - 打开Git Bash
+
+  - 执行命令：`ssh-keygen -m PEM -t rsa -C "公司邮箱地址"`
+
+  - 会提示你输入保存公钥私钥对的名称，不填默认会在这个位置：【C:\Users\Administrator\.ssh\】，其中id_rsa为私钥，id_rsa.pub为公钥
+
+  - 如果输入名称，如：privateKey，则会保存在【C:\Users\Administrator\】，名称为privateKey，其中privateKey为私钥，privateKey.pub为公钥
+
+  - 其中passphrase可以输入，也可以为空，如果填入这个属性，在配置CI里的证书时也要填上
+
+  - 生成的公钥私钥格式如下：
+
+    - 公钥格式：ssh-rsa...
+
+    - 私钥格式：
+
+      ```
+      -----BEGIN RSA PRIVATE KEY-----
+      ...
+      -----END RSA PRIVATE KEY-----
+      ```
+
+  - 为了可以拉取Git的代码，配置公钥到gitlab里，配置私钥到CI的证书里
 
 
 

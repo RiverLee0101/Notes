@@ -165,11 +165,11 @@
 
 - 然后执行：`grunt server` 运行head插件，成功如下（不成功重新安装grunt）：
 
-  ![1560504831307](C:\Users\11101453\AppData\Roaming\Typora\typora-user-images\1560504831307.png)
+  ![es-2.png](https://github.com/RiverLee0101/Notes/blob/master/images/es-2.png?raw=true)
 
 - 浏览器访问：localhost:9100，成功如下：
 
-  ![1560504936220](C:\Users\11101453\AppData\Roaming\Typora\typora-user-images\1560504936220.png)
+  ![es-3](https://github.com/RiverLee0101/Notes/blob/master/images/es-3.png?raw=true)
 
   > - 浏览器中的：localhost：9100 为head的端口
   > - 下面的：http://localhost:9200/ 为es服务端口
@@ -181,7 +181,30 @@
 - 进入head运行：cd D:\Program Files\elasticsearch-5.6.5\elasticsearch-head-master>grunt server
 - 浏览器中输入：localhost:9100 打开head管理界面
 
+## 2.6 问题解决
 
+1. 运行elasticsearch的时候出现报错： “Elasticsearch requires at least Java 8 but your Java version from XXXX does not meet this requirement”
+
+   - 原因分析：es要求java 8以上版本，但是本机配置的是java 7 版本，且因为其他项目不方便使用java 8版本
+
+   - 解决办法：
+
+     - 编辑elasticsearch文件，将文件中 JAVA_HOME 改为 ES_JAVA_HOME
+
+     ![1565596060427](C:\Users\11101453\AppData\Roaming\Typora\typora-user-images\1565596060427.png)
+
+     - 编辑电脑环境变量，新增环境变量名：ES_JAVA_HOME，环境变量值：C:\Program Files\Java\jdk1.8.0_211
+
+     - 编辑elasticsearch.in.bat，将 JAVA_HOME 改为 ES_JAVA_HOME
+
+       ![1565596249598](C:\Users\11101453\AppData\Roaming\Typora\typora-user-images\1565596249598.png)
+
+     - 再次运行elasticsearch，正常
+
+   - 方法来源：
+
+     - https://blog.csdn.net/q979076061/article/details/72830664
+     - https://www.cnblogs.com/everydaygift/p/7589273.html
 
 # 3. Elasticsearch的CURD
 

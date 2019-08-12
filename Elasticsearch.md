@@ -191,13 +191,13 @@
 
      - 编辑elasticsearch文件，将文件中 JAVA_HOME 改为 ES_JAVA_HOME
 
-     ![1565596060427](C:\Users\11101453\AppData\Roaming\Typora\typora-user-images\1565596060427.png)
+       ![es-4.png](https://github.com/RiverLee0101/Notes/blob/master/images/es-4.png?raw=true)
 
      - 编辑电脑环境变量，新增环境变量名：ES_JAVA_HOME，环境变量值：C:\Program Files\Java\jdk1.8.0_211
 
      - 编辑elasticsearch.in.bat，将 JAVA_HOME 改为 ES_JAVA_HOME
 
-       ![1565596249598](C:\Users\11101453\AppData\Roaming\Typora\typora-user-images\1565596249598.png)
+       ![es-5.png](https://github.com/RiverLee0101/Notes/blob/master/images/es-5.png?raw=true)
 
      - 再次运行elasticsearch，正常
 

@@ -1,4 +1,4 @@
-# Java设计模式
+# 一、Java设计模式
 
 - 设计模式（Design Pattern）是前辈们对代码开发经验的总结，是解决特定问题的一系列套路。它不是语法规则，而是一套用来提高代码可复用性、可维护度、稳健性以及安全性的解决方案。
 - 这23种设计模式的本质是面向对象原则的实际运用，**是对类的封装性、继承性和多态性，以及类的关联关系和组合关系的充分理解**。正确使用设计模式有以下优点：
@@ -54,9 +54,114 @@
 
 
 
+## 3. java设计模式
+
+### 3.1 适配器模式
+
+- 适配器（Adapter）模式的定义与特点：将一个类的接口转换成客户希望的另一个接口，使得原本因为接口不兼容而不能一起工作的类能一起工作。适配器模式分为 **类结构型模式 **和 **对象结构型模式 **两种，前者类之间的耦合度比后者高，且要求程序员了解现有组件库中的相关组件的内部结构，所以应用相对较少些。
+
+- 适配器模式的主要优点如下：
+
+  - 客户端通过适配器可以透明地调用目标接口；
+  - 复用了现存的类，程序员不需要修改原有代码而重用现有的适配者类；
+  - 将目标类和适配者类解耦，解决了目标类和适配者类接口不一致的问题；
+
+- 缺点：
+
+  - 对类适配器来说，更换适配器的实现过程比较复杂；
+
+- 应用场景：
+
+  - 接口中有很多个方法，而只想实现其中的某些方法，可以用接口适配器实现接口中的所有方法，可以写成空方法，然后其他需要调用接口的类实现这个适配器类，就可以重写其中的某些需要使用的方法。
+
+- 适配器（Adapter）模式的结构：
+
+  1. **目标（Target）接口**：当前系统业务所期待的接口，它可以是抽象类或接口；
+  2. **适配者（Adaptee）类**：它是被访问和适配的现存组件库中的组件接口；
+  3. **适配器（Adapter）类**：它是一个转换器，通过继承或引用适配者的对象，把适配者接口转换成目标接口，让客户按目标接口的格式访问适配者；
+
+- 类适配器模式的结构图：
+
+  ![类适配器模式的结构图](http://c.biancheng.net/uploads/allimg/181115/3-1Q1151045351c.gif)
+
+- 对象适配器模式的结构图：
+
+  ![对象适配器模式的结构图](http://c.biancheng.net/uploads/allimg/181115/3-1Q1151046105A.gif)
+
+- 模式的实现：
+
+  - 类适配器模式的代码：
+
+    ```java
+    // 将被适配的类
+    package adapter;
+    public class adaptee{
+        public void adapteeRequest(){
+            System.out.println("被适配者的方法");
+        }
+    }
+    ```
+
+    ```java
+    // 定义一个目标接口
+    public interface Target{
+        public void request();
+    }
+    ```
+
+    > 怎么才可以在目标接口中的 **request()** 调用 **Adaptee** 的 **adapteeRequest()** 方法呢？
+    >
+    > 如果直接实现Target是不行的。
+    >
+    > 如果通过一个适配器类，**实现Target接口**，同时**继承Adaptee类**，然后在实现的request方法中调用父类的adapteeRequest()即可实现。
+
+    ```java
+    // 适配器类
+    public class Adapter extends Adaptee implements Target{
+        @Override
+        publiv void request(){
+            // ...其他操作...
+            super.adapteeRequest();
+            // ...其他操作...
+        }
+    }
+    ```
+
+    ```java
+    public class Test{
+        public static void main(String[] args){
+            Target adapterTarget = new Adapter();
+            adapterTarget.request();
+        }
+    }
+    ```
+
+  - 对象适配器的代码：
+
+    > 对象适配器与类适配器不同之处在于，类适配器通过继承来完成适配，对象适配器通过**关联**来完成，这里稍微修改一下 Adapter 类即可转变为对象适配器。
+
+    ```java
+    public class Adapter implements Target{
+        // 适配者是对象适配器的一个属性
+        private Adaptee adaptee = new Adaptee();
+        
+        @Override
+        public void request(){
+            // ...
+            adaptee.adapteeRequest();
+            // ...
+        }
+        
+    }
+    ```
+
+    
+
+### 3.2 责任链模式
 
 
-# 软件设计原则-7条开发原则
+
+# 二、软件设计原则-7条开发原则
 
 在软件开发中，为了提高系统的 可维护性和可复用性，增加软件的可扩展性和灵活性，程序员要尽量根据7条原则来开发程序，从而提高软件开发效率、节约软件开发成本和维护成本。这7条开发原则分别是：
 
